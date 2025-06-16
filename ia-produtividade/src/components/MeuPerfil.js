@@ -9,8 +9,8 @@
         const fetchPerfil = async () => {
         try {
             const token = localStorage.getItem('token');
-            const resposta = await axios.get('http://localhost:5000/api/perfil', {
-            headers: { Authorization: `Bearer ${token}` }
+            const resposta = await axios.get(`${process.env.REACT_APP_API_URL}/api/perfil`, {
+                headers: { Authorization: `Bearer ${token}` }
             });
             setPerfil(resposta.data);
         } catch (err) {

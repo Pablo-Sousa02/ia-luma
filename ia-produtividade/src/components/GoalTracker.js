@@ -10,7 +10,7 @@ function GoalTracker() {
   useEffect(() => {
     const fetchGoals = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/metas', {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/metas`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setGoals(res.data);
@@ -26,7 +26,7 @@ function GoalTracker() {
     if (goalInput.trim() === '') return;
     try {
       const res = await axios.post(
-        'http://localhost:5000/api/metas',
+        `${process.env.REACT_APP_API_URL}/api/metas`,
         { texto: goalInput },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -41,7 +41,7 @@ function GoalTracker() {
   const incrementProgress = async (id) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/metas/${id}/progresso`,
+        `${process.env.REACT_APP_API_URL}/api/metas/${id}/progresso`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -55,7 +55,7 @@ function GoalTracker() {
   // Remove meta
   const removeGoal = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/metas/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/metas/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setGoals(goals.filter((g) => g._id !== id));

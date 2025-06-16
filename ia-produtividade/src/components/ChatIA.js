@@ -75,11 +75,11 @@ function ChatIA({ aoFechar = () => {}, aoReceberTarefas = () => {} }) {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
-        "http://localhost:5000/api/ia/organizar",
-        { prompt: input.trim() },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/ia/organizar`, {
+        prompt: input.trim(),
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
       const respostaIA = res.data.respostaIA || "";
       const tarefasIAraw = res.data.tarefas || [];

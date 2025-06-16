@@ -12,7 +12,7 @@ function TaskList() {
   // Memoizar atualizarTarefas para evitar warning no useEffect
   const atualizarTarefas = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/tarefas", {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/tarefas`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTarefas(res.data);
@@ -32,7 +32,7 @@ function TaskList() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/tarefas",
+        `${process.env.REACT_APP_API_URL}/api/tarefas`,
         { nome: novaTarefa },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -48,7 +48,7 @@ function TaskList() {
       const respostas = await Promise.all(
         tarefasIA.map((tarefa) =>
           axios.post(
-            "http://localhost:5000/api/tarefas",
+            `${process.env.REACT_APP_API_URL}/api/tarefas`,
             { nome: tarefa.nome },
             { headers: { Authorization: `Bearer ${token}` } }
           )
@@ -64,7 +64,7 @@ function TaskList() {
 
   const removerTarefa = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/tarefas/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/tarefas/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTarefas((prev) => prev.filter((t) => t._id !== id));
@@ -76,7 +76,7 @@ function TaskList() {
   const toggleConcluida = async (id) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/tarefas/${id}/concluir`,
+        `${process.env.REACT_APP_API_URL}/api/tarefas/${id}/concluir`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
