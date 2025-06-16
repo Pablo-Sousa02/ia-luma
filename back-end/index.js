@@ -14,8 +14,21 @@ const app = express();
 connectDB();
 
 // CORS configurado para aceitar apenas do front hospedado na Vercel
+const allowedOrigins = [
+  'https://motiv-ai.vercel.app',  // front deployado
+  'http://localhost:3000'          // front local React
+];
+
 app.use(cors({
-  origin: 'https://motiv-ai.vercel.app',
+  origin: function(origin, callback){
+    // Permite requests sem origem (como Postman, CURL)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'Acesso CORS negado pela política de segurança.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
 
