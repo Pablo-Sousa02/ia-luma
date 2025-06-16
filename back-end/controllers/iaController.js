@@ -35,6 +35,7 @@ const organizarIA = async (req, res) => {
           Nunca inclua a frase "Aqui estão suas tarefas:" ou listas numeradas se o usuário não pedir explicitamente.
 
           Sempre mantenha um tom simpático e encorajador.
+          Se o usuário pedir para colocar os nomes dos dias das semanas, faça isso.
         `,
       },
     ];
