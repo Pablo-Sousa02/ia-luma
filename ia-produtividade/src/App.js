@@ -8,6 +8,7 @@ import GoalTracker from './components/GoalTracker';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MeuPerfil from './components/MeuPerfil';
+import PomodoroTimer from './components/PomodoroTimer';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -48,6 +49,14 @@ function App() {
           element={
             <PrivateRoute>
               <MeuPerfil />
+            </PrivateRoute>
+          }
+        />
+          <Route 
+          path="/pomodoro"
+          element={
+            <PrivateRoute>
+              <PomodoroTimer />
             </PrivateRoute>
           }
         />
