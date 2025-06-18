@@ -105,35 +105,33 @@ function Navbar() {
                 <li className="nav-item">
                   <Link className="nav-link" to="/metas">🎯 Metas</Link>
                 </li>
-
-                {!isLogged && (
-                  <>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/login">🔐 Login</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/cadastro">🧾 Cadastro</Link>
-                    </li>
-                  </>
-                )}
-
-                {isLogged && (
-                  <>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/perfil">👤 Meu Perfil</Link>
-                    </li>
-                    <li className="nav-item d-flex align-items-center">
-                      <button
-                        onClick={openModal}
-                        className="btn btn-link nav-link"
-                        style={{ cursor: 'pointer' }}
-                        title="Sair"
-                      >
-                        <i className="bi bi-box-arrow-right fs-2" style={{ color: 'gray' }}></i>
-                      </button>
-                    </li>
-                  </>
-                )}
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">👤 Login</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/cadastro"> 📝 Cadastro</Link>
+                </li>
+                
+                              {isLogged && (
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/perfil">👤 Meu Perfil</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/pomodoro">⏱️ Pomodoro</Link>
+                  </li>
+                  <li className="nav-item d-flex align-items-center">
+                    <button
+                      onClick={openModal}
+                      className="btn btn-link nav-link"
+                      style={{ cursor: 'pointer' }}
+                      title="Sair"
+                    >
+                      <i className="bi bi-box-arrow-right fs-2" style={{ color: 'gray' }}></i>
+                    </button>
+                  </li>
+                </>
+              )}
               </ul>
             </div>
           </div>

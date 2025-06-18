@@ -26,7 +26,10 @@ export default function Home() {
             <strong>3. Mensagens Motivacionais:</strong> Receba mensagens personalizadas para manter sua motivação em alta.
           </li>
           <li className="mb-3">
-            <strong>4. Chat com IA (em breve):</strong> Converse com a IA para obter ajuda personalizada e otimizar sua produtividade.
+            <strong>4. Chat com IA :</strong> Converse com a IA para obter ajuda personalizada e otimizar sua produtividade.
+          </li>
+          <li className="mb-3">
+            <strong>5. Técnica Pomodoro:</strong> Utilize a técnica Pomodoro para gerenciar seu tempo de forma eficaz.
           </li>
         </ul>
       </div>
