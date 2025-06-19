@@ -45,7 +45,7 @@ export default function Home() {
       {!isLogged && (
         <>
           <p className="text-center text-muted fs-6">
-            Comece agora criando sua conta ou fazendo login!
+            Comece agora fazendo seu cadastro ou fazendo login!
           </p>
           <div className="d-flex justify-content-center gap-4 mt-4">
             <Link to="/login" className="btn btn-primary px-4 py-2 shadow">
