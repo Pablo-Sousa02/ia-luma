@@ -35,6 +35,7 @@ const PageTransition = ({ children }) => {
   );
 };
 
+// Rota protegida por autenticação
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -67,6 +68,7 @@ const UpdateNotification = ({ onReload }) => (
   </div>
 );
 
+// Conteúdo do app com rotas e verificação de atualização
 function AppWrapper() {
   const location = useLocation();
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -84,18 +86,13 @@ function AppWrapper() {
       onUpdate: (registration) => {
         newWorker = registration.waiting;
         setUpdateAvailable(true);
+        window.newWorker = newWorker;
       },
       onSuccess: (registration) => {
-        // Força checagem ao abrir o app
         checkForUpdate(registration);
-
-        // Checa nova versão a cada 60 segundos (opcional)
         setInterval(() => checkForUpdate(registration), 60000);
       },
     });
-
-    // Armazena worker globalmente para acesso externo
-    window.newWorker = newWorker;
   }, []);
 
   const reloadPage = () => {
@@ -124,6 +121,15 @@ function AppWrapper() {
 
       {updateAvailable && <UpdateNotification onReload={reloadPage} />}
     </>
+  );
+}
+
+// Componente principal (corrigido para o build)
+function App() {
+  return (
+    <Router>
+      <AppWrapper />
+    </Router>
   );
 }
 
