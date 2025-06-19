@@ -11,7 +11,7 @@
     export function register(config) {
     if ('serviceWorker' in navigator) {
         // O endereço do service worker
-        const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+        const swUrl = '/service-worker.js';;
 
         if (isLocalhost) {
         // Se estiver em localhost, faz uma verificação especial

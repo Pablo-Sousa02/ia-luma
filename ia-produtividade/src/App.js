@@ -72,31 +72,36 @@ function AppWrapper() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   useEffect(() => {
-    let registration;
+    let newWorker;
 
-    const checkForUpdate = async () => {
+    const checkForUpdate = async (registration) => {
       if (registration) {
-        await registration.update(); // força checagem de nova versão
+        await registration.update();
       }
     };
 
     serviceWorkerRegistration.register({
-      onUpdate: () => {
+      onUpdate: (registration) => {
+        newWorker = registration.waiting;
         setUpdateAvailable(true);
       },
-      onSuccess: (reg) => {
-        registration = reg;
-
+      onSuccess: (registration) => {
         // Força checagem ao abrir o app
-        registration.update();
+        checkForUpdate(registration);
 
-        // Opcional: checa nova versão a cada 60 segundos
-        setInterval(checkForUpdate, 60000);
+        // Checa nova versão a cada 60 segundos (opcional)
+        setInterval(() => checkForUpdate(registration), 60000);
       },
     });
+
+    // Armazena worker globalmente para acesso externo
+    window.newWorker = newWorker;
   }, []);
 
   const reloadPage = () => {
+    if (window.newWorker) {
+      window.newWorker.postMessage({ type: 'SKIP_WAITING' });
+    }
     window.location.reload();
   };
 
@@ -119,14 +124,6 @@ function AppWrapper() {
 
       {updateAvailable && <UpdateNotification onReload={reloadPage} />}
     </>
-  );
-}
-
-function App() {
-  return (
-    <Router>
-      <AppWrapper />
-    </Router>
   );
 }
 
