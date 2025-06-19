@@ -1,4 +1,4 @@
-    const CACHE_NAME = 'motiv-ai-cache-v1';
+    const CACHE_NAME = 'motiv-ai-cache-v2'; // Atualize a versão do cache para forçar limpeza
     const urlsToCache = [
     '/',
     '/index.html',
@@ -6,22 +6,20 @@
     '/logo192.png',
     '/logo512.png',
     '/manifest.json',
-    // Bootstrap e outros assets podem ser incluídos aqui, se quiser cachear
+    // Inclua outros assets estáticos importantes para cache
     ];
 
-    // Durante a instalação, o service worker vai cachear os arquivos essenciais
+    // Durante a instalação, cacheia arquivos essenciais
     self.addEventListener('install', (event) => {
     console.log('[Service Worker] Instalando e cacheando arquivos...');
     event.waitUntil(
-        caches.open(CACHE_NAME)
-        .then((cache) => {
-            return cache.addAll(urlsToCache);
-        })
+        caches.open(CACHE_NAME).then((cache) => {
+        return cache.addAll(urlsToCache);
+        }).then(() => self.skipWaiting()) // Força o novo SW ativar imediatamente
     );
-    self.skipWaiting();
     });
 
-    // Ativação do service worker: limpa caches antigos
+    // Ativação: limpa caches antigos
     self.addEventListener('activate', (event) => {
     console.log('[Service Worker] Ativando e limpando caches antigos...');
     event.waitUntil(
@@ -34,47 +32,53 @@
             }
             })
         );
-        })
+        }).then(() => self.clients.claim()) // Garante controle imediato das páginas abertas
     );
-    self.clients.claim();
     });
 
     // Intercepta requisições e responde com cache ou faz fetch da rede
     self.addEventListener('fetch', (event) => {
-    // Para requisições GET
     if (event.request.method !== 'GET') return;
 
     event.respondWith(
-        caches.match(event.request)
-        .then((cachedResponse) => {
-            if (cachedResponse) {
-            // Retorna do cache
-            return cachedResponse;
+        caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+            return cachedResponse; // Retorna cache se disponível
+        }
+
+        return fetch(event.request).then((networkResponse) => {
+            // Só cacheia respostas válidas e do mesmo domínio (tipo basic)
+            if (
+            !networkResponse ||
+            networkResponse.status !== 200 ||
+            networkResponse.type !== 'basic'
+            ) {
+            return networkResponse;
             }
-            // Se não tiver no cache, faz fetch da rede e adiciona ao cache
-            return fetch(event.request).then((networkResponse) => {
-            if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-                return networkResponse;
-            }
+
             const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => {
+            // Evita cachear requisições cruzadas de outros domínios
+            if (event.request.url.startsWith(self.location.origin)) {
                 cache.put(event.request, responseClone);
-            });
-            return networkResponse;
-            });
-        }).catch(() => {
-            // Se a rede falhar e não tiver cache, você pode retornar um fallback
-            // Por exemplo, uma página offline:
-            if (event.request.mode === 'navigate') {
-            return caches.match('/offline.html'); // Caso crie uma página offline
             }
+            });
+
+            return networkResponse;
+        });
+        }).catch(() => {
+        // Fallback para navegação offline (caso crie /offline.html)
+        if (event.request.mode === 'navigate') {
+            return caches.match('/offline.html');
+        }
         })
     );
     });
 
-    // Opcional: escuta mensagens para ativar imediatamente nova versão do SW
+    // Escuta mensagem para ativar imediatamente a nova versão do SW
     self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
+        self.clients.claim();
     }
     });
