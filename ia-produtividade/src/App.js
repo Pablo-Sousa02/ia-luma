@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 import { AnimatePresence, motion } from 'framer-motion';
@@ -11,6 +11,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MeuPerfil from './components/MeuPerfil';
 import PomodoroTimer from './components/PomodoroTimer';
+
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 // Componente para animação das páginas
 const PageTransition = ({ children }) => {
@@ -41,9 +43,52 @@ const PrivateRoute = ({ children }) => {
   return children;
 };
 
+// Componente para aviso de atualização do PWA
+const UpdateNotification = ({ onReload }) => {
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        bottom: 20,
+        right: 20,
+        backgroundColor: '#101758',
+        color: 'white',
+        padding: '12px 20px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+        cursor: 'pointer',
+        zIndex: 10000,
+        fontWeight: 'bold',
+        userSelect: 'none',
+      }}
+      onClick={onReload}
+      title="Clique para atualizar"
+    >
+      🚀 Nova versão disponível! Clique aqui para atualizar.
+    </div>
+  );
+};
+
 function AppWrapper() {
-  // Hook para pegar a localização atual da rota (para animação)
   const location = useLocation();
+
+  // Estado para controlar quando nova versão estiver disponível
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
+  // Função para disparar aviso de atualização
+  const onSWUpdate = () => {
+    setUpdateAvailable(true);
+  };
+
+  // Registra o service worker com callback para atualização
+  useEffect(() => {
+    serviceWorkerRegistration.register({ onUpdate: onSWUpdate });
+  }, []);
+
+  // Recarrega a página para atualizar a versão do app
+  const reloadPage = () => {
+    window.location.reload();
+  };
 
   return (
     <>
@@ -90,11 +135,12 @@ function AppWrapper() {
           </Routes>
         </AnimatePresence>
       </div>
+
+      {updateAvailable && <UpdateNotification onReload={reloadPage} />}
     </>
   );
 }
 
-// Como o hook useLocation só funciona dentro do Router, criamos um wrapper para usar dentro do Router
 function App() {
   return (
     <Router>

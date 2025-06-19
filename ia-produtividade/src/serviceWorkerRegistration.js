@@ -1,5 +1,3 @@
-    // serviceWorkerRegistration.js
-
     // Verifica se o navegador suporta service workers
     const isLocalhost = Boolean(
     window.location.hostname === 'localhost' ||
@@ -107,4 +105,3 @@
         });
     }
     }
-    // Compare this snippet from ia-produtividade/src/components/Navbar.js:
