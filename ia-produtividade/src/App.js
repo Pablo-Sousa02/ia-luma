@@ -14,7 +14,7 @@ import PomodoroTimer from './components/PomodoroTimer';
 
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-// Componente para animação das páginas
+// Animação de transição entre páginas
 const PageTransition = ({ children }) => {
   const variants = {
     initial: { opacity: 0, x: 50 },
@@ -43,49 +43,59 @@ const PrivateRoute = ({ children }) => {
   return children;
 };
 
-// Componente para aviso de atualização do PWA
-const UpdateNotification = ({ onReload }) => {
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: 20,
-        right: 20,
-        backgroundColor: '#101758',
-        color: 'white',
-        padding: '12px 20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
-        cursor: 'pointer',
-        zIndex: 10000,
-        fontWeight: 'bold',
-        userSelect: 'none',
-      }}
-      onClick={onReload}
-      title="Clique para atualizar"
-    >
-      🚀 Nova versão disponível! Clique aqui para atualizar.
-    </div>
-  );
-};
+// Componente visual do aviso de atualização
+const UpdateNotification = ({ onReload }) => (
+  <div
+    style={{
+      position: 'fixed',
+      bottom: 20,
+      right: 20,
+      backgroundColor: '#101758',
+      color: 'white',
+      padding: '12px 20px',
+      borderRadius: '8px',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+      cursor: 'pointer',
+      zIndex: 10000,
+      fontWeight: 'bold',
+      userSelect: 'none',
+    }}
+    onClick={onReload}
+    title="Clique para atualizar"
+  >
+    🚀 Nova versão disponível! Clique aqui para atualizar.
+  </div>
+);
 
 function AppWrapper() {
   const location = useLocation();
-
-  // Estado para controlar quando nova versão estiver disponível
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
-  // Função para disparar aviso de atualização
-  const onSWUpdate = () => {
-    setUpdateAvailable(true);
-  };
-
-  // Registra o service worker com callback para atualização
   useEffect(() => {
-    serviceWorkerRegistration.register({ onUpdate: onSWUpdate });
+    let registration;
+
+    const checkForUpdate = async () => {
+      if (registration) {
+        await registration.update(); // força checagem de nova versão
+      }
+    };
+
+    serviceWorkerRegistration.register({
+      onUpdate: () => {
+        setUpdateAvailable(true);
+      },
+      onSuccess: (reg) => {
+        registration = reg;
+
+        // Força checagem ao abrir o app
+        registration.update();
+
+        // Opcional: checa nova versão a cada 60 segundos
+        setInterval(checkForUpdate, 60000);
+      },
+    });
   }, []);
 
-  // Recarrega a página para atualizar a versão do app
   const reloadPage = () => {
     window.location.reload();
   };
@@ -99,39 +109,10 @@ function AppWrapper() {
             <Route path="/" element={<PageTransition><Home /></PageTransition>} />
             <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
             <Route path="/cadastro" element={<PageTransition><RegisterPage /></PageTransition>} />
-
-            <Route
-              path="/tarefas"
-              element={
-                <PrivateRoute>
-                  <PageTransition><TaskList /></PageTransition>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/metas"
-              element={
-                <PrivateRoute>
-                  <PageTransition><GoalTracker /></PageTransition>
-                </PrivateRoute>
-              }
-            />
-            <Route 
-              path="/perfil"
-              element={
-                <PrivateRoute>
-                  <PageTransition><MeuPerfil /></PageTransition>
-                </PrivateRoute>
-              }
-            />
-            <Route 
-              path="/pomodoro"
-              element={
-                <PrivateRoute>
-                  <PageTransition><PomodoroTimer /></PageTransition>
-                </PrivateRoute>
-              }
-            />
+            <Route path="/tarefas" element={<PrivateRoute><PageTransition><TaskList /></PageTransition></PrivateRoute>} />
+            <Route path="/metas" element={<PrivateRoute><PageTransition><GoalTracker /></PageTransition></PrivateRoute>} />
+            <Route path="/perfil" element={<PrivateRoute><PageTransition><MeuPerfil /></PageTransition></PrivateRoute>} />
+            <Route path="/pomodoro" element={<PrivateRoute><PageTransition><PomodoroTimer /></PageTransition></PrivateRoute>} />
           </Routes>
         </AnimatePresence>
       </div>
