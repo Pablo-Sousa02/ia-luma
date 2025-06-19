@@ -1,6 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
+  const [isLogged, setIsLogged] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLogged(!!token); // true se existir token
+  }, []);
+
   return (
     <div className="container py-5" style={{ maxWidth: '900px' }}>
       <h1 className="mb-4 text-center" style={{ color: '#101758' }}>
@@ -34,9 +42,21 @@ export default function Home() {
         </ul>
       </div>
 
-      <p className="text-center text-muted fs-6">
-        Comece agora criando sua conta ou fazendo login!
-      </p>
+      {!isLogged && (
+        <>
+          <p className="text-center text-muted fs-6">
+            Comece agora criando sua conta ou fazendo login!
+          </p>
+          <div className="d-flex justify-content-center gap-4 mt-4">
+            <Link to="/login" className="btn btn-primary px-4 py-2 shadow">
+              👤 Login
+            </Link>
+            <Link to="/cadastro" className="btn btn-success px-4 py-2 shadow">
+              📝 Cadastro
+            </Link>
+          </div>
+        </>
+      )}
     </div>
   );
 }
