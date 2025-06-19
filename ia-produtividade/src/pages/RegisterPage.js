@@ -10,12 +10,14 @@
     const [senha, setSenha] = useState('');
     const [mensagem, setMensagem] = useState('');
     const [erro, setErro] = useState('');
+    const [loading, setLoading] = useState(false); // estado loading
 
     const handleRegister = async (e) => {
         e.preventDefault();
 
         setMensagem('');
         setErro('');
+        setLoading(true); // começa loading
 
         try {
         // Requisição POST para o backend com os dados do cadastro
@@ -37,6 +39,8 @@
         }
         } catch (error) {
         setErro('Erro ao conectar com o servidor.');
+        } finally {
+        setLoading(false); // termina loading
         }
     };
 
@@ -63,6 +67,7 @@
                     required
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
+                    disabled={loading} // desabilita input durante loading
                 />
                 </div>
 
@@ -74,6 +79,7 @@
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading} // desabilita input durante loading
                 />
                 </div>
 
@@ -85,11 +91,23 @@
                     required
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
+                    disabled={loading} // desabilita input durante loading
                 />
                 </div>
 
-                <button type="submit" className="btn btn-success w-100">
-                Cadastrar
+                <button type="submit" className="btn btn-success w-100" disabled={loading}>
+                {loading ? (
+                    <div className="d-flex justify-content-center align-items-center">
+                    <div
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                    ></div>
+                    Carregando...
+                    </div>
+                ) : (
+                    'Cadastrar'
+                )}
                 </button>
             </form>
 
