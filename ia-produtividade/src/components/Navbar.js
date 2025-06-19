@@ -112,7 +112,7 @@ function Navbar() {
       <div
         ref={offcanvasRef}
         className="offcanvas offcanvas-end text-bg-dark"
-        tabIndex="-1"
+        tabIndex="1"
         id="offcanvasNavbar"
         aria-labelledby="offcanvasNavbarLabel"
         style={{ maxWidth: '250px' }}
